@@ -1,0 +1,17 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p git coreutils jq
+set -eu
+set -o pipefail
+
+main() {
+
+	# Make sure our version-metadata JSON files are up-to-date
+	git ls-remote --tags --refs https://github.com/erlang/otp "OTP-*" \
+		| gawk -f versions.awk
+
+	# Build our manifest
+	jq '[ .[] | { version: .version, rev: .rev, sha256: .sha256 } ]' -s $(dirname "${BASH_SOURCE[0]}")/version-metadata/* \
+    > $(dirname "${BASH_SOURCE[0]}")/../erlang-manifest.json
+}
+
+main "${@}
