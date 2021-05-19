@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> { }, nixpkgs ? <nixpkgs> }:
 let
-   erlang = pkgs.beam.interpreters.erlangR24;
+   erlang = erlang.development.interpreters.erlang.R24;
 
    buildElixir = pkgs.callPackage (import "${nixpkgs}/pkgs/development/interpreters/elixir/generic-builder.nix") { erlang = erlang; };
    elixir = buildElixir {
