@@ -1,6 +1,13 @@
 { pkgs ? import <nixpkgs> { }, nixpkgs ? <nixpkgs> }:
 let
-   erlang = erlang.development.interpreters.erlang.R24;
+  nixpkgs = builtins.fetchTarball {
+      url = "https://github.com/J3T4R0/Nix-erl/archive/refs/tags/2.0.1.tar.gz";
+      sha256 = "0kqya4566ab1rv7mlsdsdjb2sk6b88whb0l23f4ldkgy29sa7szm";
+  };                                 
+  erlang = import ./NixOS/pkgs/development/interpreters/erlang/R24.nix; 
+  #erlang = import erlang_source.nixpkgs {};
+
+  #erlang = NixOS.pkgs.development.interpreters.erlang.R24;
 
    buildElixir = pkgs.callPackage (import "${nixpkgs}/pkgs/development/interpreters/elixir/generic-builder.nix") { erlang = erlang; };
    elixir = buildElixir {
@@ -12,7 +19,7 @@ let
     inherit (pkgs.lib) optional optionals;
 
 in pkgs.mkShell rec {
-  name = "elixir-1.12.0-rc.1_dev_env";
+  name = elixir;
   buildInputs = with pkgs; [
     rebar
     rebar3
