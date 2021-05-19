@@ -1,15 +1,15 @@
-{ pkgs ? import <nixpkgs> { }, nixpkgs ? <nixpkgs> }:
+with (import <nixpkgs> {}).pkgs;
 let
-  nixpkgs = builtins.fetchTarball {
-      url = "https://github.com/J3T4R0/Nix-erl/archive/refs/tags/2.0.1.tar.gz";
-      sha256 = "0kqya4566ab1rv7mlsdsdjb2sk6b88whb0l23f4ldkgy29sa7szm";
+  nixpkgs = builtins.fetchGit {
+      url = "https://github.com/J3T4R0/Nix-erl";
+    #  sha256 = "12wc9kh6qpa56zd0hb6api4n0v52vgggba3j5x9n2n1sck67hhmc";
   };                                 
   erlang = import ./NixOS/pkgs/development/interpreters/erlang/R24.nix; 
   #erlang = import erlang_source.nixpkgs {};
 
   #erlang = NixOS.pkgs.development.interpreters.erlang.R24;
 
-   buildElixir = pkgs.callPackage (import "${nixpkgs}/pkgs/development/interpreters/elixir/generic-builder.nix") { erlang = erlang; };
+   buildElixir = pkgs.callPackage (import "${nixpkgs}/NixOS/pkgs/development/interpreters/elixir/generic-builder.nix") { erlang = erlang; };
    elixir = buildElixir {
       version = "1.12.0-rc.1";
       minimumOTPVersion = "24";
@@ -18,8 +18,8 @@ let
 
     inherit (pkgs.lib) optional optionals;
 
-in pkgs.mkShell rec {
-  name = elixir;
+in pkgs.mkShell rec {  
+  name = "elixir-1.12.0-rc.1_dev_env";  
   buildInputs = with pkgs; [
     rebar
     rebar3
